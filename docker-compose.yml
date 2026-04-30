@@ -1,0 +1,15 @@
+services:
+  lepong:
+    build: .
+    container_name: lepong
+    restart: unless-stopped
+    volumes:
+      - ./checkpoints:/app/checkpoints:ro
+    networks:
+      - web
+    # Internal only — exposed via the shared "web" network to the
+    # caddy proxy (see /srv/proxy). No host port binding.
+
+networks:
+  web:
+    external: true
