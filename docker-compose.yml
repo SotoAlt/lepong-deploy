@@ -3,6 +3,10 @@ services:
     build: .
     container_name: lepong
     restart: unless-stopped
+    # Cap RAM (see silent-deploy for rationale). 1 GB headroom over
+    # steady-state ~400 MB; lepong is the smaller game container.
+    mem_limit: 1000m
+    memswap_limit: 1000m
     volumes:
       - ./checkpoints:/app/checkpoints:ro
     networks:
