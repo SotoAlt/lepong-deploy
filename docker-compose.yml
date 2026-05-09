@@ -11,6 +11,12 @@ services:
       - ./checkpoints:/app/checkpoints:ro
     networks:
       - web
+    environment:
+      # Federation data tap. Set both vars to enable capture of
+      # (emb, action) pairs into the lepong_v1 federation pool.
+      # Unset → tap is a no-op, no extra CPU.
+      - AURA_FEDERATION_URL=${AURA_FEDERATION_URL:-}
+      - AURA_INGEST_TOKEN=${AURA_INGEST_TOKEN:-}
     # Internal only — exposed via the shared "web" network to the
     # caddy proxy (see /srv/proxy). No host port binding.
 
