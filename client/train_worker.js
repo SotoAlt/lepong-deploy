@@ -264,6 +264,7 @@ const runOneRound = async () => {
         t: 'hello',
         client_id: cid,
         generation: manifest ? manifest.generation : undefined,
+        privy_token: _privyToken,
       }));
       status('waiting for round announce');
     };
@@ -333,8 +334,14 @@ const runLoop = async () => {
   log(`worker stopped cid=${cid}`);
 };
 
+let _privyToken = null;
+
 self.onmessage = (e) => {
-  const { type } = e.data || {};
-  if (type === 'start') runLoop();
-  else if (type === 'stop') stopRequested = true;
+  const { type, token } = e.data || {};
+  if (type === 'token') {
+    _privyToken = (typeof token === 'string' && token) ? token : null;
+  } else if (type === 'start') {
+    if (typeof token === 'string' && token) _privyToken = token;
+    runLoop();
+  } else if (type === 'stop') stopRequested = true;
 };

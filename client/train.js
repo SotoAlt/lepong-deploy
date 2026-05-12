@@ -212,12 +212,21 @@ window.LepongFedTrain = (() => {
         settle(reject, new Error('round timeout (180s) — server slow or quorum unmet'));
       }, 180000);
 
-      ws.onopen = () => {
-        log('connected; hello cid=' + cid, 'send');
+      ws.onopen = async () => {
+        let privyToken = null;
+        try {
+          if (window.AuraPrivy && window.AuraPrivy.isLoggedIn()) {
+            privyToken = await window.AuraPrivy.getAccessToken();
+          }
+        } catch (e) {
+          console.warn('[fed] privy token fetch failed; sending anonymous', e);
+        }
+        log('connected; hello cid=' + cid + (privyToken ? ' (signed in)' : ' (anon)'), 'send');
         ws.send(JSON.stringify({
           t: 'hello',
           client_id: cid,
           generation: manifest ? manifest.generation : undefined,
+          privy_token: privyToken,
         }));
         onStatus('waiting for round announce');
       };
