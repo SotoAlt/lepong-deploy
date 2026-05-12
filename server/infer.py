@@ -185,6 +185,14 @@ async def train_worker_js():
     return HTMLResponse("// train_worker.js not present", media_type="application/javascript", status_code=404)
 
 
+@app.get("/privy.js")
+async def privy_js():
+    path = pathlib.Path(__file__).parent.parent / "client" / "privy.js"
+    if path.exists():
+        return HTMLResponse(path.read_text(), media_type="application/javascript")
+    return HTMLResponse("// privy.js not present", media_type="application/javascript", status_code=404)
+
+
 @app.get("/health")
 async def health():
     return {
